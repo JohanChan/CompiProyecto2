@@ -1,0 +1,45 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">TypesTy</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <!--input type="file" class="file-input" change="console.log(event.target.files)" #fileUpload-->
+          <label class="btn btn-outline-danger nav-link">
+            Abrir
+            <input type="file" class="file-input" (change)="abrirArchivo($event)" hidden>
+          </label>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-outline-info">Guardar</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-outline-danger" tabindex="-1" aria-disabled="true">Nueva Pestaña</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-outline-info" tabindex="-1" aria-disabled="true">Cerrar Pestaña</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-outline-danger" tabindex="-1" aria-disabled="true">Reporte AST</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-outline-info" tabindex="-1" aria-disabled="true">Gramaticas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-outline-danger" tabindex="-1" aria-disabled="true" (click)="compilar()">Compilar</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="form-floating">
+  <p style="margin-left: 17%; margin-top: 1%;" class="fa fa-file-code-o"> Entrada</p>
+  <textarea  class="form-control" style="margin-left:17%; height: 200px; width: 60%;" [(ngModel)] = "codigo"></textarea>
+</div>
+<div class="form-floating">
+  <p style="margin-left: 17%; margin-top: 1%;" class="fa fa-terminal"> Consola</p>
+  <textarea class="form-control" style="margin-left: 17%;height: 200px; width: 60%;" [(ngModel)] = "consola"></textarea>
+</div>
