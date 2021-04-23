@@ -4,8 +4,7 @@ export enum tipo{
     BOOLEANO,
     CARACTER,
     CADENA,
-    VOID,
-    INDEFINIDO
+    VOID
 }
 
 export default class Tipo{
@@ -18,21 +17,21 @@ export default class Tipo{
     }
 
     getTipo(stype: string): tipo{
-        let auxiliar = tipo.INDEFINIDO;
+        
         if(stype == 'ENTERO'){
             return tipo.ENTERO;
         }else if(stype == 'DECIMAL'){
-            auxiliar = tipo.DECIMAL;
+            return tipo.DECIMAL;
         }else if(stype == 'BOOLEANO'){
-            auxiliar = tipo.BOOLEANO;
+            return tipo.BOOLEANO;
         }else if(stype == 'CARACTER'){
-            auxiliar = tipo.CARACTER;
+            return tipo.CARACTER;
         }else if(stype == 'CADENA'){
-            auxiliar = tipo.CADENA;
+            return tipo.CADENA;
         }else if(stype == 'VOID'){
-            auxiliar = tipo.VOID;
+            return tipo.VOID;
         }
-        return auxiliar;
+        
     }
 
     getStype():string{

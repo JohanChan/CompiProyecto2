@@ -17,16 +17,15 @@ export default class Primitivo implements Expresion{
     }
 
     getTipo(controlador: Controlador, tabla: TablaSimbolos): tipo{
-        let valor = this.getTipo(controlador,tabla);
-        let tip = tipo.INDEFINIDO;
+        let valor = this.getValor(controlador,tabla);
+        
         if(typeof valor === 'number'){
-            tip =  tipo.DECIMAL;
+            return  tipo.DECIMAL;
         }else if(typeof valor === 'string'){
-            tip = tipo.CADENA;
+            return tipo.CADENA;
         }else if(typeof valor==='boolean'){
-            tip = tipo.BOOLEANO;
+            return tipo.BOOLEANO;
         }
-        return tip;
     }
 
     getValor(controlador: Controlador, tabla: TablaSimbolos){

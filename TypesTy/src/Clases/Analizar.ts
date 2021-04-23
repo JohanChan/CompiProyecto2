@@ -14,11 +14,7 @@ export class Analizador{
             console.log(ast);
             let controlador = new Controlador();
             let tablaGlobal = new TablaSimbolos(null as any);
-
             ast.ejecutar(controlador, tablaGlobal);
-
-            //let ts_html = controlado.graficar_ts(controlado,ts_global);
-
             let retorno = {"consola" : controlador.consola}
             return retorno;
         } catch (error) {

@@ -39,7 +39,7 @@ caracter (\'({escape2}|{acepta2})\')
 ","                  { console.log("Reconocio : "+ yytext); return 'COMA'}
 "="                  { console.log("Reconocio : "+ yytext); return 'IGUAL'}
 "=="                 { console.log("Reconocio : "+ yytext); return 'ASIGNAR'}
-"!="                 { console.log("Reconocio : "+ yytext); return 'DIFERENCIA'}
+"!="                 { console.log("Reconocio : "+ yytext); return 'DIFERENTE'}
 "<"                  { console.log("Reconocio : "+ yytext); return 'MENORQ'}
 "<="                 { console.log("Reconocio : "+ yytext); return 'MENORIGUAL'}
 ">"                  { console.log("Reconocio : "+ yytext); return 'MAYORQ'}
@@ -49,6 +49,8 @@ caracter (\'({escape2}|{acepta2})\')
 "!"                  { console.log("Reconocio : "+ yytext); return 'NOT'}
 ":"                  { console.log("Reconocio : "+ yytext); return 'DOSP'}
 "?"                  { console.log("Reconocio : "+ yytext); return 'INTERRC'}
+"^"                  { console.log("Reconocio : "+ yytext); return 'POTENCIA'}
+"%"                  { console.log("Reconocio : "+ yytext); return 'MOD'}
 
 /* Palabras reservadas */
 "int"               { console.log("Reconocio : "+ yytext); return 'INT'}
@@ -93,7 +95,8 @@ caracter (\'({escape2}|{acepta2})\')
     const declara = require('src/Clases/Instrucciones/Declaracion');
     const tipo = require('src/Clases/TablaSimbolos/Tipo');
     const simbolo = require('src/Clases/TablaSimbolos/Simbolos');
-    /* const evaluar = require('../Clases/Evaluar'); */
+    const asigna = require('src/Clases/Instrucciones/Asignacion');
+    const aritmetica = require('src/Clases/Expresiones/Aritmetica');
 %}
 
 /* Precedencia de operadores */
@@ -116,8 +119,11 @@ instrucciones : instrucciones instruccion {$$ = $1; $$.push($2); }
             | instruccion { $$ = new Array(); $$.push($1); }
             ;
 
-instruccion : print { $$ = $1; }
-            | declaracion { $$ = $1; }
+instruccion : print         { $$ = $1; }
+            | declaracion   { $$ = $1; }
+            | asignacion    { $$ = $1; }
+            ;
+asignacion : ID IGUAL expresion PYC { $$ = new asigna.default($1, $3 ,@1.first_line,@1.last_column); }
             ;
 
 print : PRINT PARA expresion PARC PYC { $$ = new Print.default($3, @1.first_line, @1.last_column);}
@@ -130,14 +136,20 @@ declaracion : tipo ID PYC                 { $$ = new declara.default($1, new sim
 tipo : INT      { $$ = new tipo.default('ENTERO'); }
     | DOUBLE    { $$ = new tipo.default('DECIMAL'); }
     | CHAR      { $$ = new tipo.default('CARACTER'); }
-    | CADENA    { $$ = new tipo.default('CADENA'); }
+    | STRING    { $$ = new tipo.default('CADENA'); }
+    | BOOLEAN   { $$ = new tipo.default('BOOLEANO'); }
     ;
 
 expresion: DECIMAL { $$ = new primitivo.default(Number(yytext), $1.first_line, $1.last_column); }
         | ENTERO   { $$ = new primitivo.default(Number(yytext), $1.first_line, $1.last_column); }
         | CADENA   { $1 = $1.slice(1, $1.length-1); $$ = new primitivo.default($1, $1.first_line, $1.last_column); }
-        | CARACTER { $1 = $1.slice(1, $1.length-1); $$ = new primitivo.default($1, $1.first_line, $1.last_column); }
+        | CARACTER { $1 = $1.slice(1, $1.length-1); console.log($1); $$ = new primitivo.default($1, $1.first_line, $1.last_column); }
         | TRUE     { $$ = new primitivo.default(true, $1.first_line, $1.last_column); }
         | FALSE    { $$ = new primitivo.default(false, $1.first_line, $1.last_column); }
-        | ID       { $$ = new identificador.default($1,@1.first_line, @1.last_column); }
+        | ID       { $$ = new identificador.default($1, @1.first_line, @1.last_column); }
+        | expresion MAS expresion { $$ = new aritmetica.default($1, '+', $3, $1.first_line, $1.last_column, false); }
+        | expresion MENOS expresion { $$ = new aritmetica.default($1, '-', $3, $1.first_line, $1.last_column, false); }
+        | expresion MULTI expresion { $$ = new aritmetica.default($1, '*', $3, $1.first_line, $1.last_column, false); }
+        | expresion DIV expresion { $$ = new aritmetica.default($1, '/', $3, $1.first_line, $1.last_column, false); }
+        | MENOS expresion %prec UNARIO { $$ = new aritmetica.default($1, 'UNARIO', null, $1.first_line, $1.last_column, false); }
         ;

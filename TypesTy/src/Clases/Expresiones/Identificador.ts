@@ -19,12 +19,10 @@ export default class Identificador implements Expresion{
 
     getTipo(controlador: Controlador, tabla: TablaSimbolos): tipo{
         let idExistente = tabla.getSimbolo(this.identificador);
-        let aux = tipo.INDEFINIDO;
+        
         if(idExistente != null){
-            aux =  idExistente.tipo.type;
-            return aux;
+            return  idExistente.tipo.type;
         }
-        return aux;
     }   
     getValor(controlador: Controlador, tabla: TablaSimbolos){
         let idExistente = tabla.getSimbolo(this.identificador);
