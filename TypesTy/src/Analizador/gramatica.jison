@@ -97,6 +97,7 @@ caracter (\'({escape2}|{acepta2})\')
     const simbolo = require('src/Clases/TablaSimbolos/Simbolos');
     const asigna = require('src/Clases/Instrucciones/Asignacion');
     const aritmetica = require('src/Clases/Expresiones/Aritmetica');
+    const logica = require('src/Clases/Expresiones/Logica');
 %}
 
 /* Precedencia de operadores */
@@ -152,4 +153,7 @@ expresion: DECIMAL { $$ = new primitivo.default(Number(yytext), $1.first_line, $
         | expresion MULTI expresion { $$ = new aritmetica.default($1, '*', $3, $1.first_line, $1.last_column, false); }
         | expresion DIV expresion { $$ = new aritmetica.default($1, '/', $3, $1.first_line, $1.last_column, false); }
         | MENOS expresion %prec UNARIO { $$ = new aritmetica.default($1, 'UNARIO', null, $1.first_line, $1.last_column, false); }
+        | expresion AND expresion { $$ = new logica.default($1, '&&', $2, $1.first_line, $1.last_column, false); }
+        | expresion OR expresion { $$ = new logica.default($1, '||', $2, $1.first_line, $1.last_column, false); }
+        | NOT expresion { $$ = new logica.default($2, '!', null, $1.first_line, $1.last_column, true); }
         ;
