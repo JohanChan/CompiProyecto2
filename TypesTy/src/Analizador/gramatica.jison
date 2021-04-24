@@ -37,8 +37,8 @@ caracter (\'({escape2}|{acepta2})\')
 "]"                  { console.log("Reconocio : "+ yytext); return 'CORC'}
 ";"                  { console.log("Reconocio : "+ yytext); return 'PYC'}
 ","                  { console.log("Reconocio : "+ yytext); return 'COMA'}
+"=="                 { console.log("Reconocio : "+ yytext); return 'COMPARAR'}
 "="                  { console.log("Reconocio : "+ yytext); return 'IGUAL'}
-"=="                 { console.log("Reconocio : "+ yytext); return 'ASIGNAR'}
 "!="                 { console.log("Reconocio : "+ yytext); return 'DIFERENTE'}
 "<"                  { console.log("Reconocio : "+ yytext); return 'MENORQ'}
 "<="                 { console.log("Reconocio : "+ yytext); return 'MENORIGUAL'}
@@ -98,6 +98,7 @@ caracter (\'({escape2}|{acepta2})\')
     const asigna = require('src/Clases/Instrucciones/Asignacion');
     const aritmetica = require('src/Clases/Expresiones/Aritmetica');
     const logica = require('src/Clases/Expresiones/Logica');
+    const relacional = require('src/Clases/Expresiones/Relacional');
 %}
 
 /* Precedencia de operadores */
@@ -105,10 +106,12 @@ caracter (\'({escape2}|{acepta2})\')
 %left 'OR'
 %left 'AND'
 %right 'NOT'
-%left 'MENORQ' 'MAYORQ' 'ASIGNAR' 'MENORIGUAL' 'MAYORIGUAL'
+%left 'COMPARAR' 'DIFERENTE' 'MENORQ' 'MENORIGUAL' 'MAYORQ' 'MAYORIGUAL'
 %left 'MAS' 'MENOS'
-%left 'MULTI' 'DIV'
+%left 'DIV' 'MULTI' 'MOD'
+%nonassoc 'POTENCIA'
 %right 'UNARIO'
+
 
 %start inicio
 
@@ -129,8 +132,20 @@ asignacion : ID IGUAL expresion PYC { $$ = new asigna.default($1, $3 ,@1.first_l
 
 print : PRINT PARA expresion PARC PYC { $$ = new Print.default($3, @1.first_line, @1.last_column);}
     ;
-
-declaracion : tipo ID PYC                 { $$ = new declara.default($1, new simbolo.default(1,null,$2,null), @1.first_line, @1.last_column); }
+// int = 0, string = 4, char = 3, boolean = 2, double = 1
+declaracion : tipo ID PYC   { 
+                                if($1.type == 0){
+                                    $$ = new declara.default($1, new simbolo.default(1,null,$2,new primitivo.default(0, @1.first_line, @1.last_column)), @1.first_line, @1.last_column); 
+                                }else if($1.type == 1){
+                                    $$ = new declara.default($1, new simbolo.default(1,null,$2,new primitivo.default(0.0, @1.first_line, @1.last_column)), @1.first_line, @1.last_column); 
+                                }else if($1.type == 2){
+                                    $$ = new declara.default($1, new simbolo.default(1,null,$2,new primitivo.default(true, @1.first_line, @1.last_column)), @1.first_line, @1.last_column); 
+                                }else if($1.type == 3){
+                                    $$ = new declara.default($1, new simbolo.default(1,null,$2,new primitivo.default('\0', @1.first_line, @1.last_column)), @1.first_line, @1.last_column); 
+                                }else if($1.type == 4){
+                                    $$ = new declara.default($1, new simbolo.default(1,null,$2,new primitivo.default("", @1.first_line, @1.last_column)), @1.first_line, @1.last_column); 
+                                }
+                            }
             | tipo ID IGUAL expresion PYC { $$ = new declara.default($1, new simbolo.default(1,null,$2,$4), @1.first_line, @1.last_column); }
             ;
 
@@ -141,19 +156,28 @@ tipo : INT      { $$ = new tipo.default('ENTERO'); }
     | BOOLEAN   { $$ = new tipo.default('BOOLEANO'); }
     ;
 
-expresion: DECIMAL { $$ = new primitivo.default(Number(yytext), $1.first_line, $1.last_column); }
-        | ENTERO   { $$ = new primitivo.default(Number(yytext), $1.first_line, $1.last_column); }
-        | CADENA   { $1 = $1.slice(1, $1.length-1); $$ = new primitivo.default($1, $1.first_line, $1.last_column); }
-        | CARACTER { $1 = $1.slice(1, $1.length-1); console.log($1); $$ = new primitivo.default($1, $1.first_line, $1.last_column); }
-        | TRUE     { $$ = new primitivo.default(true, $1.first_line, $1.last_column); }
-        | FALSE    { $$ = new primitivo.default(false, $1.first_line, $1.last_column); }
+expresion: DECIMAL { $$ = new primitivo.default(Number(yytext), @1.first_line, @1.last_column); }
+        | ENTERO   { $$ = new primitivo.default(Number(yytext), @1.first_line, @1.last_column); }
+        | CADENA   { $1 = $1.slice(1, $1.length-1); $$ = new primitivo.default($1, @1.first_line, @1.last_column); }
+        | CARACTER { $1 = $1.slice(1, $1.length-1); $$ = new primitivo.default($1, @1.first_line, @1.last_column); }
+        | TRUE     { $$ = new primitivo.default(true, @1.first_line, @1.last_column); }
+        | FALSE    { $$ = new primitivo.default(false, @1.first_line, @1.last_column); }
         | ID       { $$ = new identificador.default($1, @1.first_line, @1.last_column); }
-        | expresion MAS expresion { $$ = new aritmetica.default($1, '+', $3, $1.first_line, $1.last_column, false); }
-        | expresion MENOS expresion { $$ = new aritmetica.default($1, '-', $3, $1.first_line, $1.last_column, false); }
-        | expresion MULTI expresion { $$ = new aritmetica.default($1, '*', $3, $1.first_line, $1.last_column, false); }
-        | expresion DIV expresion { $$ = new aritmetica.default($1, '/', $3, $1.first_line, $1.last_column, false); }
-        | MENOS expresion %prec UNARIO { $$ = new aritmetica.default($1, 'UNARIO', null, $1.first_line, $1.last_column, false); }
-        | expresion AND expresion { $$ = new logica.default($1, '&&', $2, $1.first_line, $1.last_column, false); }
-        | expresion OR expresion { $$ = new logica.default($1, '||', $2, $1.first_line, $1.last_column, false); }
-        | NOT expresion { $$ = new logica.default($2, '!', null, $1.first_line, $1.last_column, true); }
+        | expresion MAS expresion { $$ = new aritmetica.default($1, '+', $3, @1.first_line, @1.last_column, false); }
+        | expresion MENOS expresion { $$ = new aritmetica.default($1, '-', $3, @1.first_line, @1.last_column, false); }
+        | expresion MULTI expresion { $$ = new aritmetica.default($1, '*', $3, @1.first_line, @1.last_column, false); }
+        | expresion DIV expresion { $$ = new aritmetica.default($1, '/', $3, @1.first_line, @1.last_column, false); }
+        | MENOS expresion %prec UNARIO { $$ = new aritmetica.default($1, 'UNARIO', null, @1.first_line, @1.last_column, false); }
+        | expresion AND expresion { $$ = new logica.default($1, '&&', $3, @1.first_line, @1.last_column, false); }
+        | expresion OR expresion { $$ = new logica.default($1, '||', $3, @1.first_line, @1.last_column, false); }
+        | NOT expresion { $$ = new logica.default($2, '!', null, @1.first_line, @1.last_column, true); }
+        | PARA expresion PARC { $$= $2; }
+        | expresion POTENCIA expresion { $$ = new aritmetica.default($1, '^', $3, @1.first_line, @1.last_column, false); }
+        | expresion MOD expresion { $$ = new aritmetica.default($1, '%', $3, @1.first_line, @1.last_column, false); }
+        | expresion MENORQ expresion { $$ = new relacional.default($1,'<',$3,@1.first_line, @1.last_column, false); }
+        | expresion MENORIGUAL expresion { $$ = new relacional.default($1,'<=',$3,@1.first_line, @1.last_column, false); }
+        | expresion MAYORQ expresion { $$ = new relacional.default($1,'>',$3,@1.first_line, @1.last_column, false); }
+        | expresion MAYORIGUAL expresion { $$ = new relacional.default($1,'>=',$3,@1.first_line, @1.last_column, false); }
+        | expresion DIFERENTE expresion { $$ = new relacional.default($1,'!=',$3,@1.first_line, @1.last_column, false); }
+        | expresion COMPARAR expresion { $$ = new relacional.default($1,'==',$3,@1.first_line, @1.last_column, false); }
         ;

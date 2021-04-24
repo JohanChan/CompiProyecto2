@@ -77,27 +77,19 @@ export default class Aritmentica extends Operacion implements Expresion{
                         }
                     }
                 }else if(typeof valorIzq === 'string'){
-                    return valorIzq + valorDer;
-                        /*if(valorIzq.length == 1){
-                            if(typeof valorDer === 'string'){
-                                if(valorDer.length == 1){
-                                    let letra = valorDer.charCodeAt(0);
-                                    return valorIzq + letra; 
-                                }else{
-                                    return valorIzq + valorDer;
-                                }
-                            }
-                        }else{
-                            if(typeof valorDer === 'string'){
-                                if(valorDer.length == 1){
-                                    return valorIzq + valorDer;
-                                }else{
-                                    return valorIzq + valorDer;
-                                }
-                            }else if(typeof valorDer === 'number'){
+                    //return valorIzq + valorDer;
+                        if(valorIzq.length == 1){
+                            if(typeof valorDer === 'number'){
+                                return valorIzq + valorDer;
+                            }else if (typeof valorDer === 'boolean'){
+                                controlador.append(`Error semantico: La variable ${valorIzq} tipo char no se puede sumar con variable ${valorDer} tipo boolean, fila: ${this.fila} columna: ${this.columna}`);
+                                controlador.errores.push(new Errores('Semantico',`La variable ${valorIzq} tipo char no se puede sumar con variable ${valorDer} tipo boolean`,this.fila, this.columna));    
+                            }else if(typeof valorDer === 'string'){
                                 return valorIzq + valorDer;
                             }
-                        }*/
+                        }else{
+                            return valorIzq + valorDer;
+                        }
                 }
                 break;
                 case Operador.UNARIO:
@@ -196,6 +188,26 @@ export default class Aritmentica extends Operacion implements Expresion{
                         }else{
                             controlador.append(`Error semantico: La variables ${valorIzq} ${valorDer} no se pueden dividir, fila: ${this.fila} columna: ${this.columna}`);
                             controlador.errores.push(new Errores('Semantico',`La variables ${valorIzq} ${valorDer} no se pueden dividir`,this.fila, this.columna));                            
+                        }
+                    }
+                break;
+                case Operador.MOD:
+                    if(typeof valorIzq === 'number'){
+                        if(typeof valorDer === 'number'){
+                            return valorIzq % valorDer;
+                        }else{
+                            controlador.append(`Error semantico: Se esperaba variable tipo int o double, fila: ${this.fila}, columna: ${this.columna}`)
+                            controlador.errores.push(new Errores('Semantico',`Se esperaba variable tipo int o double`,this.fila, this.columna));
+                        }
+                    }
+                break;
+                case Operador.POTENCIA:
+                    if(typeof valorIzq === 'number'){
+                        if(typeof valorDer === 'number'){
+                            return Math.pow(valorIzq, valorDer);
+                        }else{
+                            controlador.append(`Error semantico: Se esperaba variable tipo int o double, fila: ${this.fila}, columna: ${this.columna}`)
+                            controlador.errores.push(new Errores('Semantico',`Se esperaba variable tipo int o double`,this.fila, this.columna));
                         }
                     }
                 break;

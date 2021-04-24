@@ -17,7 +17,10 @@ export enum Operador{
     AND,
     NOT,
     UNARIO,
-    ASIGNAR
+    POTENCIA,
+    MOD,
+    COMPARAR,
+    DIFERENTE
 }
 
 export default class Operacion implements Expresion{
@@ -53,6 +56,10 @@ export default class Operacion implements Expresion{
             case '&&': return Operador.AND; break;
             case '!': return Operador.NOT; break;
             case 'UNARIO': return Operador.MAYORIGUAL; break;
+            case '%': return Operador.MOD; break;
+            case '^': return Operador.POTENCIA; break;
+            case '==': return Operador.COMPARAR; break;
+            case '!=': return Operador.DIFERENTE; break;
         }
 
     }

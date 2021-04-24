@@ -35,8 +35,6 @@ export default class Logica extends Operacion implements Expresion{
             valorUnario = this.expresionIzq.getValor(controlador, tabla);
             
         }
-
-
         switch(this.operador){
             case Operador.AND:
                 if(typeof valorIzq === 'boolean'){

@@ -28,7 +28,7 @@ export class AppComponent {
     let analizar = new analizador.Analizador();
     if(this.codigo != ""){
       let exec = analizar.exec(this.codigo);
-      this.consola = exec.consola;
+      this.consola += exec.consola;
     }
   }
 }
