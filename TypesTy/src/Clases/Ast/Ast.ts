@@ -19,12 +19,12 @@ export default class Ast implements Instruccion{
                 metodo.agregarSimbolFunc(controlador,tabla);
             }
         }
+        let execActivado = 0;
         for(let i of this.listadoI){
-            let flag = 0;
-            if(i instanceof Exec && flag == 0){
+            if(i instanceof Exec && execActivado == 0){
                 i.ejecutar(controlador, tabla);
-                flag = 1;
-            }else{
+                execActivado = 1;
+            }else if(execActivado == 1){
                 controlador.append('Error: Exec solo puede venir una vez');
                 return;
             }
