@@ -5,7 +5,7 @@ import Simbolos from "../TablaSimbolos/Simbolos";
 import { TablaSimbolos } from "../TablaSimbolos/TablaSimbolos";
 import Tipo from "../TablaSimbolos/Tipo";
 
-export default class Funcion extends Simbolos implements Instruccion{
+export default class Metodo extends Simbolos implements Instruccion{
     public listadosInstrucciones: Array<Instruccion>;
     public fila: number;
     public columna: number;
@@ -36,7 +36,11 @@ export default class Funcion extends Simbolos implements Instruccion{
     }
     
     recorrer(): Nodo {
-        throw new Error("Method not implemented.");
+        let raiz = new Nodo("Funcion","");
+        raiz.agregarHijo(new Nodo(this.tipo.stype,""));
+        raiz.agregarHijo(new Nodo(this.identificador,""));
+
+        raiz.agregarHijo(new Nodo("(",""));
     }
     
 }

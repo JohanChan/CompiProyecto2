@@ -30,7 +30,6 @@ export default class Aritmentica extends Operacion implements Expresion{
         let valorDer;
         let valorUnario;
 
-
         if(this.esUnario == false){
             valorIzq = this.expresionIzq.getValor(controlador,tabla);
             valorDer = this.expresionDer.getValor(controlador,tabla);

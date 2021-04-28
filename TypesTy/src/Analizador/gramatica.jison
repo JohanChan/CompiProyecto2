@@ -27,9 +27,9 @@ caracter (\'({escape2}|{acepta2})\')
 
 "*"                  { console.log("Reconocio : "+ yytext); return 'MULTI'}
 "/"                  { console.log("Reconocio : "+ yytext); return 'DIV'}
-"-"                  { console.log("Reconocio : "+ yytext); return 'MENOS'}
-"++"                 { console.log("Reconocio : "+ yytext); return 'INCRE'}
 "--"                 { console.log("Reconocio : "+ yytext); return 'DECRE'}
+"++"                 { console.log("Reconocio : "+ yytext); return 'INCRE'}
+"-"                  { console.log("Reconocio : "+ yytext); return 'MENOS'}
 "+"                  { console.log("Reconocio : "+ yytext); return 'MAS'}
 "("                  { console.log("Reconocio : "+ yytext); return 'PARA'}
 ")"                  { console.log("Reconocio : "+ yytext); return 'PARC'}
@@ -40,10 +40,10 @@ caracter (\'({escape2}|{acepta2})\')
 "=="                 { console.log("Reconocio : "+ yytext); return 'COMPARAR'}
 "="                  { console.log("Reconocio : "+ yytext); return 'IGUAL'}
 "!="                 { console.log("Reconocio : "+ yytext); return 'DIFERENTE'}
-"<"                  { console.log("Reconocio : "+ yytext); return 'MENORQ'}
 "<="                 { console.log("Reconocio : "+ yytext); return 'MENORIGUAL'}
-">"                  { console.log("Reconocio : "+ yytext); return 'MAYORQ'}
 ">="                 { console.log("Reconocio : "+ yytext); return 'MAYORIGUAL'}
+"<"                  { console.log("Reconocio : "+ yytext); return 'MENORQ'}
+">"                  { console.log("Reconocio : "+ yytext); return 'MAYORQ'}
 "||"                 { console.log("Reconocio : "+ yytext); return 'OR'}
 "&&"                 { console.log("Reconocio : "+ yytext); return 'AND'}
 "!"                  { console.log("Reconocio : "+ yytext); return 'NOT'}
@@ -51,6 +51,8 @@ caracter (\'({escape2}|{acepta2})\')
 "?"                  { console.log("Reconocio : "+ yytext); return 'INTERRC'}
 "^"                  { console.log("Reconocio : "+ yytext); return 'POTENCIA'}
 "%"                  { console.log("Reconocio : "+ yytext); return 'MOD'}
+"{"                  { console.log("Reconocio : "+ yytext); return 'LLAVEA'}
+"}"                  { console.log("Reconocio : "+ yytext); return 'LLAVEC'}
 
 /* Palabras reservadas */
 "int"               { console.log("Reconocio : "+ yytext); return 'INT'}
@@ -59,7 +61,7 @@ caracter (\'({escape2}|{acepta2})\')
 "char"              { console.log("Reconocio : "+ yytext); return 'CHAR'}
 "string"            { console.log("Reconocio : "+ yytext); return 'STRING'}
 "if"                { console.log("Reconocio : "+ yytext); return 'IF'}
-"else"              { console.log("Reconocio : "+ yytext); return 'ELSE'}
+"else"              { console.log("Reconocio : "+ yytext); return 'RELSE'}
 "switch"            { console.log("Reconocio : "+ yytext); return 'SWITCH'}
 "list"              { console.log("Reconocio : "+ yytext); return 'LIST'}
 "new"               { console.log("Reconocio : "+ yytext); return 'NEW'}
@@ -67,6 +69,10 @@ caracter (\'({escape2}|{acepta2})\')
 "false"             { console.log("Reconocio : "+ yytext); return 'FALSE'}
 "print"             { console.log("Reconocio : "+ yytext); return 'PRINT'}
 "ejecutar"          { console.log("Reconocio : "+ yytext); return 'EJECUTAR'}
+"while"             { console.log("Reconocio : "+ yytext); return 'WHILE'}
+"do"                { console.log("Reconocio : "+ yytext); return 'DO'}
+"for"               { console.log("Reconocio : "+ yytext); return 'FOR'}
+"void"              { console.log("Reconocio : "+ yytext); return 'VOID'}
 
 /* SIMBOLOS ER */
 {decimal}           { console.log("Reconocio : "+ yytext); return 'DECIMAL'}
@@ -99,6 +105,11 @@ caracter (\'({escape2}|{acepta2})\')
     const aritmetica = require('src/Clases/Expresiones/Aritmetica');
     const logica = require('src/Clases/Expresiones/Logica');
     const relacional = require('src/Clases/Expresiones/Relacional');
+    const ternario = require('src/Clases/Expresiones/Ternario');
+    const If = require('src/Clases/Instrucciones/SentenciaDeControl/If');
+    const While = require('src/Clases/Instrucciones/SentenciaCiclica/While');
+    const DoWhile = require('src/Clases/Instrucciones/SentenciaCiclica/DoWhile');
+    const For = require('src/Clases/Instrucciones/SentenciaCiclica/For');
 %}
 
 /* Precedencia de operadores */
@@ -126,12 +137,42 @@ instrucciones : instrucciones instruccion {$$ = $1; $$.push($2); }
 instruccion : print         { $$ = $1; }
             | declaracion   { $$ = $1; }
             | asignacion    { $$ = $1; }
+            | Sif           { $$ = $1; }
+            | Swhile        { $$ = $1; }
+            | SDoWhile      { $$ = $1; }
+            | actualizar    { $$ = $1; }
+            | metodo        { $$ = $1; }
             ;
+
+metodo: VOID ID PARA PARC LLAVEA instrucciones LLAVEC                  {}
+    | VOID ID PARA listadoParametros PARC LLAVEA instrucciones LLAVEC  {}
+    ;
+
+listadoParametros: listadoParametros COMA tipo ID       { $$ = $1; $$.push(new simnbolo.default(6,$3,$4,null)); }
+                | tipo ID                               { $$ = new Array(); $$.push(new simnbolo.default(6,$1,$2,null)); }
+                ;
+
+actualizar: ID INCRE PYC    { $$ = new asigna.default($1, new aritmetica.default(new identificador.default($1,@1.first_line,@1.last_column),'+', new primitivo.default(1,@1.first_line,@1.last_column), @1.first_line, @1.last_column, false),@1.first_line,@1.last_column); }
+        | ID DECRE PYC      { $$ = new asigna.default($1, new aritmetica.default(new identificador.default($1,@1.first_line,@1.last_column),'-', new primitivo.default(1,@1.first_line,@1.last_column), @1.first_line, @1.last_column, false),@1.first_line,@1.last_column); }
+        ;
+
+SDoWhile: DO LLAVEA instrucciones LLAVEC WHILE PARA expresion PARC PYC    { $$ = new DoWhile.default($7,$3,@1.first_line,@1.last_column); } 
+        ;
+
+Swhile : WHILE PARA expresion PARC LLAVEA instrucciones LLAVEC { $$ = new While.default($3,$6,@1.first_line,@1.last_column); }
+        ;
+
+Sif: IF PARA expresion PARC LLAVEA instrucciones LLAVEC                                       { $$ = new If.default($3, $6, [], @1.first_line, @1.last_column); }
+    | IF PARA expresion PARC LLAVEA instrucciones LLAVEC RELSE Sif                            { $$ = new If.default($3, $6, [$9], @1.first_line, @1.last_column); }
+    | IF PARA expresion PARC LLAVEA instrucciones LLAVEC RELSE LLAVEA instrucciones LLAVEC    { $$ = new If.default($3, $6, $10, @1.first_line, @1.last_column); }
+    ;
+
 asignacion : ID IGUAL expresion PYC { $$ = new asigna.default($1, $3 ,@1.first_line,@1.last_column); }
             ;
 
 print : PRINT PARA expresion PARC PYC { $$ = new Print.default($3, @1.first_line, @1.last_column);}
     ;
+
 // int = 0, string = 4, char = 3, boolean = 2, double = 1
 declaracion : tipo ID PYC   { 
                                 if($1.type == 0){
@@ -180,4 +221,7 @@ expresion: DECIMAL { $$ = new primitivo.default(Number(yytext), @1.first_line, @
         | expresion MAYORIGUAL expresion { $$ = new relacional.default($1,'>=',$3,@1.first_line, @1.last_column, false); }
         | expresion DIFERENTE expresion { $$ = new relacional.default($1,'!=',$3,@1.first_line, @1.last_column, false); }
         | expresion COMPARAR expresion { $$ = new relacional.default($1,'==',$3,@1.first_line, @1.last_column, false); }
+        | expresion INTERRC expresion DOSP expresion { $$ = new ternario.default($1,$3,$5,@1.first_line,@1.last_column); }
+        | ID INCRE { $$ = new aritmetica.default(new identificador.default($1,@1.first_line,@1.last_column),'+', new primitivo.default(1,@1.first_line,@1.last_column), @1.first_line, @1.last_column, false); }
+        | ID DECRE { $$ = new aritmetica.default(new identificador.default($1,@1.first_line,@1.last_column),'-', new primitivo.default(1,@1.first_line,@1.last_column), @1.first_line, @1.last_column, false); }
         ;
