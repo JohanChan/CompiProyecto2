@@ -25,6 +25,7 @@ export class AppComponent {
     }
   }
   compilar():void{
+    this.consola = "";
     let analizar = new analizador.Analizador();
     if(this.codigo != ""){
       let exec = analizar.exec(this.codigo);

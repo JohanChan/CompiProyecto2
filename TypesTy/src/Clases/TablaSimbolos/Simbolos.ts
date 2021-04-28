@@ -10,7 +10,7 @@ export default class Simbolos{
     public listaParams: Array<Simbolos>;
     public metodo: boolean;
 
-    constructor(simbolo: number, tipo: Tipo, identificador: string, valor: any, listaParams?: any, metodo?: any){
+    constructor(simbolo: number, tipo: Tipo, identificador: string, valor: any, listaParams?, metodo?){
         this.simbolo = simbolo;
         this.tipo = tipo;
         this.identificador = identificador;

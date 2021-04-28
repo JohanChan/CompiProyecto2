@@ -19,6 +19,7 @@ export default class Metodo extends Simbolos implements Instruccion{
 
     agregarSimbolFunc(controlador: Controlador, tabla: TablaSimbolos){
         if(!(tabla.existe(this.identificador))){
+             
             tabla.agregar(this.identificador, this);
         }else{
 
@@ -26,6 +27,7 @@ export default class Metodo extends Simbolos implements Instruccion{
     }
     ejecutar(controlador: Controlador, tabla: TablaSimbolos) {
         let tablaLocal = new TablaSimbolos(tabla);
+        
         for(let instruccion of this.listadosInstrucciones){
             let a = instruccion.ejecutar(controlador, tablaLocal);
             if(a!=null){
@@ -36,11 +38,24 @@ export default class Metodo extends Simbolos implements Instruccion{
     }
     
     recorrer(): Nodo {
-        let raiz = new Nodo("Funcion","");
+        let raiz = new Nodo("Metodo","");
         raiz.agregarHijo(new Nodo(this.tipo.stype,""));
         raiz.agregarHijo(new Nodo(this.identificador,""));
 
         raiz.agregarHijo(new Nodo("(",""));
+
+        raiz.agregarHijo(new Nodo(")",""));
+        raiz.agregarHijo(new Nodo("{",""));
+
+        let instruccion = new Nodo("Instrucciones","");
+        for(let i of this.listadosInstrucciones){
+            instruccion.agregarHijo(i.recorrer());
+        }
+
+        raiz.agregarHijo(instruccion);
+        raiz.agregarHijo(new Nodo("}",""));
+
+        return raiz;
     }
     
 }

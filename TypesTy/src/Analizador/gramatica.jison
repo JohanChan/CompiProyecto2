@@ -73,6 +73,7 @@ caracter (\'({escape2}|{acepta2})\')
 "do"                { console.log("Reconocio : "+ yytext); return 'DO'}
 "for"               { console.log("Reconocio : "+ yytext); return 'FOR'}
 "void"              { console.log("Reconocio : "+ yytext); return 'VOID'}
+"exec"              { console.log("Reconocio : "+ yytext); return 'EXEC'}
 
 /* SIMBOLOS ER */
 {decimal}           { console.log("Reconocio : "+ yytext); return 'DECIMAL'}
@@ -110,6 +111,9 @@ caracter (\'({escape2}|{acepta2})\')
     const While = require('src/Clases/Instrucciones/SentenciaCiclica/While');
     const DoWhile = require('src/Clases/Instrucciones/SentenciaCiclica/DoWhile');
     const For = require('src/Clases/Instrucciones/SentenciaCiclica/For');
+    const metodo = require('src/Clases/Instrucciones/Metodo');
+    const llamadita = require('src/Clases/Instrucciones/Llamada');
+    const execito = require('src/Clases/Instrucciones/Exec');
 %}
 
 /* Precedencia de operadores */
@@ -134,26 +138,39 @@ instrucciones : instrucciones instruccion {$$ = $1; $$.push($2); }
             | instruccion { $$ = new Array(); $$.push($1); }
             ;
 
-instruccion : print         { $$ = $1; }
-            | declaracion   { $$ = $1; }
-            | asignacion    { $$ = $1; }
-            | Sif           { $$ = $1; }
-            | Swhile        { $$ = $1; }
-            | SDoWhile      { $$ = $1; }
-            | actualizar    { $$ = $1; }
-            | metodo        { $$ = $1; }
+instruccion : print           { $$ = $1; }
+            | declaracion     { $$ = $1; }
+            | asignacion      { $$ = $1; }
+            | Sif             { $$ = $1; }
+            | Swhile          { $$ = $1; }
+            | SDoWhile        { $$ = $1; }
+            | actualizar PYC  { $$ = $1; }
+            | metodo          { $$ = $1; }
+            | llamaMetodo PYC { $$ = $1; }
+            | Sexec PYC       { $$ = $1; }
             ;
 
-metodo: VOID ID PARA PARC LLAVEA instrucciones LLAVEC                  {}
-    | VOID ID PARA listadoParametros PARC LLAVEA instrucciones LLAVEC  {}
+Sexec: EXEC llamaMetodo { $$ = new execito.default($2,@1.first_line,@1.last_column); }
     ;
 
-listadoParametros: listadoParametros COMA tipo ID       { $$ = $1; $$.push(new simnbolo.default(6,$3,$4,null)); }
-                | tipo ID                               { $$ = new Array(); $$.push(new simnbolo.default(6,$1,$2,null)); }
+llamaMetodo: ID PARA parametrosLlamda PARC { $$ = new llamadita.default($1,@1.first_line,@1.last_column,$3); }
+            | ID PARA PARC                 { $$ = new llamadita.default($1,@1.first_line,@1.last_column,[]); }    
+        ;
+
+parametrosLlamda: parametrosLlamda COMA expresion    { $$ = $1; $$.push($3); }
+                | expresion                          { $$ = new Array(); $$.push($1); }
+                ;        
+
+metodo: VOID ID PARA PARC LLAVEA instrucciones LLAVEC           { $$ = new metodo.default(3, new tipo.default('VOID'), $2, [], true, $6, @1.first_line,@1.last_column); }
+    | VOID ID PARA parametros PARC LLAVEA instrucciones LLAVEC  { $$ = new metodo.default(3, new tipo.default('VOID'), $2, $4, true, $7, @1.first_line,@1.last_column); }
+    ;
+
+parametros: parametros COMA tipo ID       { $$ = $1; $$.push(new simbolo.default(6,$3,$4,null)); }
+                | tipo ID                 { $$ = new Array(); $$.push(new simbolo.default(6,$1,$2,null)); }
                 ;
 
-actualizar: ID INCRE PYC    { $$ = new asigna.default($1, new aritmetica.default(new identificador.default($1,@1.first_line,@1.last_column),'+', new primitivo.default(1,@1.first_line,@1.last_column), @1.first_line, @1.last_column, false),@1.first_line,@1.last_column); }
-        | ID DECRE PYC      { $$ = new asigna.default($1, new aritmetica.default(new identificador.default($1,@1.first_line,@1.last_column),'-', new primitivo.default(1,@1.first_line,@1.last_column), @1.first_line, @1.last_column, false),@1.first_line,@1.last_column); }
+actualizar: ID INCRE   { $$ = new asigna.default($1, new aritmetica.default(new identificador.default($1,@1.first_line,@1.last_column),'+', new primitivo.default(1,@1.first_line,@1.last_column), @1.first_line, @1.last_column, false),@1.first_line,@1.last_column); }
+        | ID DECRE     { $$ = new asigna.default($1, new aritmetica.default(new identificador.default($1,@1.first_line,@1.last_column),'-', new primitivo.default(1,@1.first_line,@1.last_column), @1.first_line, @1.last_column, false),@1.first_line,@1.last_column); }
         ;
 
 SDoWhile: DO LLAVEA instrucciones LLAVEC WHILE PARA expresion PARC PYC    { $$ = new DoWhile.default($7,$3,@1.first_line,@1.last_column); } 
