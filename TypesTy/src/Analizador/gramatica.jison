@@ -74,6 +74,9 @@ caracter (\'({escape2}|{acepta2})\')
 "for"               { console.log("Reconocio : "+ yytext); return 'FOR'}
 "void"              { console.log("Reconocio : "+ yytext); return 'VOID'}
 "exec"              { console.log("Reconocio : "+ yytext); return 'EXEC'}
+"default"           { console.log("Reconocio : "+ yytext); return 'DEFAULT'}
+"case"              { console.log("Reconocio : "+ yytext); return 'CASE'}
+"break"             { console.log("Reconocio : "+ yytext); return 'BREAK'}
 
 /* SIMBOLOS ER */
 {decimal}           { console.log("Reconocio : "+ yytext); return 'DECIMAL'}
@@ -114,6 +117,7 @@ caracter (\'({escape2}|{acepta2})\')
     const metodo = require('src/Clases/Instrucciones/Metodo');
     const llamadita = require('src/Clases/Instrucciones/Llamada');
     const execito = require('src/Clases/Instrucciones/Exec');
+
 %}
 
 /* Precedencia de operadores */
@@ -139,8 +143,8 @@ instrucciones : instrucciones instruccion {$$ = $1; $$.push($2); }
             ;
 
 instruccion : print           { $$ = $1; }
-            | declaracion     { $$ = $1; }
-            | asignacion      { $$ = $1; }
+            | declaracion PYC { $$ = $1; }
+            | asignacion  PYC { $$ = $1; }
             | Sif             { $$ = $1; }
             | Swhile          { $$ = $1; }
             | SDoWhile        { $$ = $1; }
@@ -148,7 +152,19 @@ instruccion : print           { $$ = $1; }
             | metodo          { $$ = $1; }
             | llamaMetodo PYC { $$ = $1; }
             | Sexec PYC       { $$ = $1; }
+            /*| Swtich          { $$ = $1; }*/
+            | Sfor            { $$ = $1; } 
+            /*| BREAK           {  }*/
             ;
+/*Switch: SWITCH  PARA expresion PARC LLAVEA listadoCases DEFAULT LLAVEC
+            | SWITCH PARA expresion PARC LLAVEA listadoCases LLAVEC
+            | SWITCH PARA expresion PARC LLAVEA DEFAULT LLAVEC
+            ;
+
+listadoCases: case expresion DOSP instrucciones for( int i = 0; i<10; i++){ }*/
+Sfor: FOR PARA declaracion PYC expresion PYC actualizar PARC LLAVEA instrucciones LLAVEC { console.log($3.simbolo); $$ = new For.default($3,expresion,); }
+    | FOR PARA asignacion PYC expresion PYC actualizar PARC LLAVEA instrucciones LLAVEC  { console.log($3.simbolo); }
+    ;
 
 Sexec: EXEC llamaMetodo { $$ = new execito.default($2,@1.first_line,@1.last_column); }
     ;
@@ -184,14 +200,14 @@ Sif: IF PARA expresion PARC LLAVEA instrucciones LLAVEC                         
     | IF PARA expresion PARC LLAVEA instrucciones LLAVEC RELSE LLAVEA instrucciones LLAVEC    { $$ = new If.default($3, $6, $10, @1.first_line, @1.last_column); }
     ;
 
-asignacion : ID IGUAL expresion PYC { $$ = new asigna.default($1, $3 ,@1.first_line,@1.last_column); }
+asignacion : ID IGUAL expresion { $$ = new asigna.default($1, $3 ,@1.first_line,@1.last_column); }
             ;
 
 print : PRINT PARA expresion PARC PYC { $$ = new Print.default($3, @1.first_line, @1.last_column);}
     ;
 
 // int = 0, string = 4, char = 3, boolean = 2, double = 1
-declaracion : tipo ID PYC   { 
+declaracion : tipo ID    { 
                                 if($1.type == 0){
                                     $$ = new declara.default($1, new simbolo.default(1,null,$2,new primitivo.default(0, @1.first_line, @1.last_column)), @1.first_line, @1.last_column); 
                                 }else if($1.type == 1){
@@ -204,7 +220,7 @@ declaracion : tipo ID PYC   {
                                     $$ = new declara.default($1, new simbolo.default(1,null,$2,new primitivo.default("", @1.first_line, @1.last_column)), @1.first_line, @1.last_column); 
                                 }
                             }
-            | tipo ID IGUAL expresion PYC { $$ = new declara.default($1, new simbolo.default(1,null,$2,$4), @1.first_line, @1.last_column); }
+            | tipo ID IGUAL expresion { $$ = new declara.default($1, new simbolo.default(1,null,$2,$4), @1.first_line, @1.last_column); }
             ;
 
 tipo : INT      { $$ = new tipo.default('ENTERO'); }
@@ -213,6 +229,7 @@ tipo : INT      { $$ = new tipo.default('ENTERO'); }
     | STRING    { $$ = new tipo.default('CADENA'); }
     | BOOLEAN   { $$ = new tipo.default('BOOLEANO'); }
     ;
+
 
 expresion: DECIMAL { $$ = new primitivo.default(Number(yytext), @1.first_line, @1.last_column); }
         | ENTERO   { $$ = new primitivo.default(Number(yytext), @1.first_line, @1.last_column); }

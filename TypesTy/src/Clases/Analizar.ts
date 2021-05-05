@@ -12,11 +12,11 @@ export class Analizador{
             
             let ast = analizador.parse(entrada);
             console.log(ast);
-            let controlador = new Controlador();
+            /*let controlador = new Controlador();
             let tablaGlobal = new TablaSimbolos(null as any);
             ast.ejecutar(controlador, tablaGlobal);
-            let retorno = {"consola" : controlador.consola}
-            return retorno;
+            let retorno = {"consola" : controlador.consola}*/
+            return ast;
         } catch (error) {
             console.log("Ocurrio un error al analizar la entrada");
             return "Ocurrio un error al analizar"
