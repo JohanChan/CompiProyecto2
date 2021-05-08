@@ -38,7 +38,13 @@ export default class Asignacion implements Instruccion{
     }
 
     recorrer(): Nodo {
-        throw new Error("Method not implemented.");
+        let raiz = new Nodo('Asignacion','');
+        raiz.agregarHijo(new Nodo(this.id,''),);
+        raiz.agregarHijo(new Nodo('=',''));        
+        raiz.agregarHijo(this.valor.recorrer());
+        return raiz;
+        
+        //throw new Error("Method not implemented.");
     }
 
     

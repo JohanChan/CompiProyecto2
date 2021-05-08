@@ -1,5 +1,6 @@
 import { type } from "node:os";
 import Errores from "../Ast/Errores";
+import Nodo from "../Ast/Nodo";
 import Controlador from "../Controlador";
 import { Expresion } from "../Interfaz/Expresion";
 import { TablaSimbolos } from "../TablaSimbolos/TablaSimbolos";
@@ -280,5 +281,12 @@ export default class Relacional extends Operacion implements Expresion{
                 }
             break;
         }
+    }
+    recorrer():Nodo{
+        let raiz = new Nodo('Relacional','');
+        raiz.agregarHijo(this.expresionIzq.recorrer());
+        raiz.agregarHijo(new Nodo(this.operadorStr,''));
+        raiz.agregarHijo(this.expresionDer.recorrer());
+        return raiz;
     }
 }

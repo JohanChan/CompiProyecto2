@@ -1,3 +1,4 @@
+import { resolveSanitizationFn } from "@angular/compiler/src/render3/view/template";
 import { faOtter } from "@fortawesome/free-solid-svg-icons";
 import Nodo from "src/Clases/Ast/Nodo";
 import Controlador from "src/Clases/Controlador";
@@ -34,23 +35,39 @@ export default class Switch implements Instruccion{
                     }
                 }
             }
-            console.log("====================");
-            console.log(this.instruccionesDef);
-            console.log("====================");
+
             if(this.instruccionesDef != null){
-                    console.log("Pooto pero afuera");
                 for(let ins of this.instruccionesDef){
-                    console.log("Pooto");
                     ins.ejecutar(controlador,tablaLocal);
                 }
             }
-
-
-        //}
-        //throw new Error("Method not implemented.");
     }
     recorrer(): Nodo {
-        throw new Error("Method not implemented.");
+        let raiz = new Nodo('Switch','');
+        raiz.agregarHijo(new Nodo('(',''));
+        raiz.agregarHijo(this.valor.recorrer());
+        raiz.agregarHijo(new Nodo(')',''));
+        raiz.agregarHijo(new Nodo('{',''));
+        for(let ins of this.listadoCasos){
+            raiz.agregarHijo(ins.recorrer());
+        }
+
+
+        if(this.instruccionesDef != null){
+            let rdfa = new Nodo('Default','');
+//            raiz.agregarHijo(new Nodo('Default','')); 
+            rdfa.agregarHijo(new Nodo('{',''));        
+           for(let i of this.instruccionesDef){
+            rdfa.agregarHijo(i.recorrer());
+            }            
+            rdfa.agregarHijo(new Nodo('}',''));
+            raiz.agregarHijo(rdfa);
+        }
+
+        raiz.agregarHijo(new Nodo('}',''));
+        
+        return raiz;
+        //throw new Error("Method not implemented.");
     }
     
 }

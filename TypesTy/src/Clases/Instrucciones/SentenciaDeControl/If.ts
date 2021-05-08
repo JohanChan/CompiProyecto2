@@ -55,7 +55,30 @@ export default class If implements Instruccion{
         //throw new Error("Method not implemented.");
     }
     recorrer(): Nodo {
-        throw new Error("Method not implemented.");
+        let raiz = new Nodo('If','');
+
+        raiz.agregarHijo(new Nodo('(',''));
+        raiz.agregarHijo(this.condicion.recorrer());
+        raiz.agregarHijo(new Nodo(')',''));
+        raiz.agregarHijo(new Nodo('{',''));
+        for(let i of this.listadoIf){
+            raiz.agregarHijo(i.recorrer());
+        }
+        raiz.agregarHijo(new Nodo('}',''));
+        if(this.listadoElse != null){
+            let raux = new Nodo('Else','');
+            //raiz.agregarHijo(new Nodo('Else',''));
+            raux.agregarHijo(new Nodo('{',''));
+            for(let i of this.listadoElse){
+                raux.agregarHijo(i.recorrer());
+            }
+            raux.agregarHijo(new Nodo('}',''));
+            raiz.agregarHijo(raux);
+        }
+
+        return raiz;
+        
+        //throw new Error("Method not implemented.");
     }
     
 }

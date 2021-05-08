@@ -21,7 +21,9 @@ export default class Exec implements Instruccion{
     }
 
     recorrer(): Nodo {
-        throw new Error("Method not implemented.");
+        let raiz = new Nodo('Exec','');
+        raiz.agregarHijo(this.llamarMetodo.recorrer());
+        return raiz;
     }
     
 }

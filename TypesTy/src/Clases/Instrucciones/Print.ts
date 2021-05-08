@@ -25,6 +25,17 @@ export default class Print implements Instruccion{
         }
 
         recorrer(): Nodo{
-            throw new Error("Metodo no implementado");
+            let raiz = new Nodo("Print", "");
+            raiz.agregarHijo(new Nodo("print", ""));
+            raiz.agregarHijo(new Nodo("(", ""));
+            
+    
+            let hijo = new Nodo("expresion", "");
+            hijo.agregarHijo(this.expresion.recorrer());
+    
+            raiz.agregarHijo(hijo);
+            raiz.agregarHijo(new Nodo(")", ""));
+    
+            return raiz;            
         }
 }

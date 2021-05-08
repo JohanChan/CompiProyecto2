@@ -66,7 +66,6 @@ export default class Llamada implements Instruccion{
         let raiz = new Nodo("Llamada","");
         raiz.agregarHijo(new Nodo(this.id,""));
         raiz.agregarHijo(new Nodo("(",""));
-        //throw new Error("Method not implemented.");
         raiz.agregarHijo(new Nodo(")",""));
         return raiz;
     }

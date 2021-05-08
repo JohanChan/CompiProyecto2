@@ -50,6 +50,16 @@ export default class Declaracion implements Instruccion{
     }
 
     recorrer(): Nodo {
-        throw new Error("Metodo no implementado");
+        let raiz = new Nodo('Declaracion','');
+        raiz.agregarHijo(new Nodo(this.type.stype,''),);
+        
+        raiz.agregarHijo(new Nodo(this.simbolo.identificador,''));
+
+        if(this.simbolo.valor != null){
+            raiz.agregarHijo(new Nodo('=',''));
+            raiz.agregarHijo(this.simbolo.valor.recorrer());
+        }
+
+        return raiz;
     }
 }

@@ -44,7 +44,18 @@ export default class While implements Instruccion{
         //throw new Error("Method not implemented.");
     }
     recorrer(): Nodo {
-        throw new Error("Method not implemented.");
+        let raiz = new Nodo('While','');
+        raiz.agregarHijo(new Nodo('(',''));
+        raiz.agregarHijo(this.condicion.recorrer());
+        raiz.agregarHijo(new Nodo(')',''));
+        raiz.agregarHijo(new Nodo('{',''));
+        for(let i of this.listadoInstrucciones){
+            raiz.agregarHijo(i.recorrer());
+        }
+
+        raiz.agregarHijo(new Nodo('}',''));
+        return raiz;
+        //throw new Error("Method not implemented.");
     }
     
 }

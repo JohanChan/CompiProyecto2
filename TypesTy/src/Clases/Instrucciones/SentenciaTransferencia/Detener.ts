@@ -12,7 +12,8 @@ export default class Detener implements Instruccion{
         //throw new Error("Method not implemented.");
     }
     recorrer(): Nodo {
-        throw new Error("Method not implemented.");
+        return new Nodo('BREAK','');
+        //throw new Error("Method not implemented.");
     }
 
 }

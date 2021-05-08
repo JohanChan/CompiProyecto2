@@ -12,7 +12,7 @@ export default class Continuar implements Instruccion{
         //throw new Error("Method not implemented.");
     }
     recorrer(): Nodo {
-        throw new Error("Method not implemented.");
+        return new Nodo('CONTINUE','');
     }
     
 }

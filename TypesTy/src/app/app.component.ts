@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import * as analizador from "src/Clases/Analizar"
+import { graphviz } from "d3-graphviz";
+import { wasmFolder } from "@hpcc-js/wasm";
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -51,5 +53,24 @@ export class AppComponent {
   
     document.getElementById(pageName).style.display = "block";
   
+  }
+
+  recorrer(){
+    let analizar = new analizador.Analizador();
+    if (this.codigo != "") {
+      console.log("VAMOS A GRAFICAR");
+      let nodo_ast = analizar.recorrer(this.codigo);
+      console.log("nodo ast");
+      console.log(nodo_ast);
+      let grafo = nodo_ast.GraficarSintactico();  //Aqui tenemos la cadena de graphviz para graficar
+      console.log("Aca se muestra el codigo del grafo de graphviz");
+      console.log(grafo);
+
+      console.log("Vamos por el wasmFolder");
+      wasmFolder('/assets/@hpcc-js/wasm/dist/');
+      console.log("Vamos por la graficacion");
+      graphviz('#graph').renderDot(grafo);
+      console.log("Finalizada la graficacion");
+    }
   }
 }

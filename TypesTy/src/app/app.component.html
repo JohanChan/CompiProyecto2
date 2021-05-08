@@ -23,7 +23,7 @@
           <a class="nav-link btn btn-outline-info" tabindex="-1" aria-disabled="true">Cerrar Pestaña</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link btn btn-outline-danger" tabindex="-1" aria-disabled="true">Reporte AST</a>
+          <a class="nav-link btn btn-outline-danger" tabindex="-1" aria-disabled="true" (click)="recorrer()">Reporte AST</a>
         </li>
         <li class="nav-item">
           <a class="nav-link btn btn-outline-info" tabindex="-1" aria-disabled="true">Gramaticas</a>
@@ -50,4 +50,8 @@
   <table  id= "tablasimbols" style="width:100%" bordered="true">
   
   </table>
+</div>
+
+<div id="Ast">
+  <div id="graph" style="text-align: center"></div>
 </div>

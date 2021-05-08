@@ -35,7 +35,12 @@ export default class Ast implements Instruccion{
     }
     
     recorrer(): Nodo {
-        throw new Error("Metodo no implementado");
+        let raiz = new Nodo('Inicio','');
+        for (let inst of this.listadoI) {
+            raiz.agregarHijo(inst.recorrer());
+        }
+        return raiz;    
+    
     }
     
 }

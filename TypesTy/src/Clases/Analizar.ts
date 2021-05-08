@@ -24,5 +24,14 @@ export class Analizador{
             return "Ocurrio un error al analizar"
         }
     }
+
+    public recorrer(input){
+        let ast = analizador.parse(input);
+            console.log(ast);
+            let nodo_ast = ast.recorrer();
+            console.log("==============");
+            console.log(nodo_ast);
+            return nodo_ast;
+    }
     
 }

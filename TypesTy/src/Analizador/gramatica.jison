@@ -166,9 +166,9 @@ instruccion : print           { $$ = $1; }
             | RETURN PYC      { $$ = new retornar.default(null); }
             | RETURN expresion PYC { $$ = new retornar.default($2); }
             ;
-Sswitch: SWITCH PARA expresion PARC LLAVEA listaCases defa LLAVEC    { console.log("Def ",$7); $$ = new swish.default($3,$6,$7); }
-        /*| SWITCH PARA expresion PARC LLAVEA listaCases LLAVEC       { $$ = new swish.default($3,$6,null); }*/
-        /*| SWITCH PARA expresion PARC LLAVEA def LLAVEC    { $$ = new swish.default($3,null,$7); }*/
+Sswitch: SWITCH PARA expresion PARC LLAVEA listaCases defa LLAVEC   { $$ = new swish.default($3,$6,$7); }
+        | SWITCH PARA expresion PARC LLAVEA listaCases LLAVEC       { $$ = new swish.default($3,$6,null); }
+        | SWITCH PARA expresion PARC LLAVEA def LLAVEC              { $$ = new swish.default($3,null,$7); }
         ;
 listaCases: listaCases CASE expresion DOSP instrucciones { $$ = $1; $$.push( new casito.default($3,$5)); }
         | CASE expresion DOSP instrucciones              { $$ = new Array(); $$.push( new casito.default($2,$4)); } 

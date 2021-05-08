@@ -23,11 +23,15 @@ export default class Caso implements Instruccion{
                 }
             }
         }
-        
-        //throw new Error("Method not implemented.");
     }
     recorrer(): Nodo {
-        throw new Error("Method not implemented.");
+        let raiz = new Nodo('Case','');
+        raiz.agregarHijo(new Nodo('{',''));
+        for(let ins of this.listadoInstrucciones){
+            raiz.agregarHijo(ins.recorrer());
+        }
+        raiz.agregarHijo(new Nodo('}',''));
+        return raiz;
     }
 
 }

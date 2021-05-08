@@ -21,7 +21,12 @@ export default class Retonar implements Instruccion{
         //throw new Error("Method not implemented.");
     }
     recorrer(): Nodo {
-        throw new Error("Method not implemented.");
+        let raiz = new Nodo('Return','');
+        if(this.retorno != null){
+            raiz.agregarHijo(this.retorno.recorrer());
+        }
+        return raiz;
+        //throw new Error("Method not implemented.");
     }
     
 }

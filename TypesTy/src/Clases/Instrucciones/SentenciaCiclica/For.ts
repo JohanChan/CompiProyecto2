@@ -73,7 +73,28 @@ export default class For implements Instruccion{
     }
 
     recorrer(): Nodo {
-        throw new Error("Method not implemented.");
+        let raiz = new Nodo('For','');
+
+        raiz.agregarHijo(new Nodo('(',''));
+        if(this.asigna != null){
+            raiz.agregarHijo(this.asigna.recorrer());
+        }
+
+        if(this.declara!= null){
+            raiz.agregarHijo(this.declara.recorrer());
+        }
+
+        raiz.agregarHijo(this.condicion.recorrer());
+        raiz.agregarHijo(this.actualizar.recorrer());
+        raiz.agregarHijo(new Nodo(')',''));
+        
+        raiz.agregarHijo(new Nodo('{',''));
+        for(let i of this.listadoInstrucciones){
+            raiz.agregarHijo(i.recorrer());
+        }
+        raiz.agregarHijo(new Nodo('}',''));
+        
+        return raiz;
+        //throw new Error("Method not implemented.");
     }
-   
 }

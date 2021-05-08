@@ -31,6 +31,7 @@ export default class Operacion implements Expresion{
     public operador: Operador;
     public fila: number;
     public columna: number;
+    public operadorStr: string;
 
     constructor(expresionIzq, operador, expresionDer, fila, columna, esUnario){
         this.columna = columna;
@@ -39,6 +40,7 @@ export default class Operacion implements Expresion{
         this.expresionIzq = expresionIzq;
         this.fila = fila;
         this.operador = this.getOperador(operador);
+        this.operadorStr = operador;
     }
     
 

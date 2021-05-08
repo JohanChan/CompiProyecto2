@@ -1,4 +1,5 @@
 import Errores from "../Ast/Errores";
+import Nodo from "../Ast/Nodo";
 import Controlador from "../Controlador";
 import { Expresion } from "../Interfaz/Expresion";
 import { TablaSimbolos } from "../TablaSimbolos/TablaSimbolos";
@@ -71,5 +72,19 @@ export default class Logica extends Operacion implements Expresion{
                 //controlador.append(`Error Semantico: variable ${valorDer} no es de tipo boolean, fila: ${this.fila}, columna: ${this.columna}`);                
             break;
         }
+    }
+
+    recorrer():Nodo{
+        let raiz = new Nodo('Logica','');
+
+        if(this.esUnario){ //Si es negativo
+            raiz.agregarHijo(new Nodo(this.operadorStr, ""));
+            raiz.agregarHijo(this.expresionIzq.recorrer());
+        } else { //Si es positivo
+            raiz.agregarHijo(this.expresionIzq.recorrer());
+            raiz.agregarHijo(new Nodo(this.operadorStr, ""));
+            raiz.agregarHijo(this.expresionDer.recorrer());
+        }
+        return raiz;
     }
 }

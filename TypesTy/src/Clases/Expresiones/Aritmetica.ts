@@ -217,6 +217,17 @@ export default class Aritmentica extends Operacion implements Expresion{
         }
     }
     recorrer(): Nodo{
-        throw new Error("Method not implemented.");
+        let raiz = new Nodo("Expresion", "");
+
+        if(this.esUnario){ 
+            raiz.agregarHijo(new Nodo(this.operadorStr, ""));
+            raiz.agregarHijo(this.expresionIzq.recorrer());
+        } else { 
+            raiz.agregarHijo(this.expresionIzq.recorrer());
+            raiz.agregarHijo(new Nodo(this.operadorStr, ""));
+            raiz.agregarHijo(this.expresionDer.recorrer());
+        }
+
+        return raiz;
     }
 }

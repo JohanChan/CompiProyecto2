@@ -42,7 +42,13 @@ export default class Ternario implements Expresion{
         //throw new Error("Method not implemented.");
     }
     recorrer(): Nodo {
-        throw new Error("Method not implemented.");
+        let raiz = new Nodo('Ternario','');
+        raiz.agregarHijo(this.condicion.recorrer());
+        raiz.agregarHijo(new Nodo('?',''));        
+        raiz.agregarHijo(this.verdadero.recorrer());
+        raiz.agregarHijo(new Nodo(':',''));
+        raiz.agregarHijo(this.falso.recorrer());
+        return raiz;
     }
     
 }

@@ -36,6 +36,8 @@ export default class Identificador implements Expresion{
         }
     }
     recorrer(): Nodo{
-        throw new Error("Metodo no implementado");
+        let raiz = new Nodo('Id','');
+        raiz.agregarHijo(new Nodo(this.identificador,''));
+        return raiz;
     }
 }
