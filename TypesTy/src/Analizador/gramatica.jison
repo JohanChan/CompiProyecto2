@@ -77,6 +77,8 @@ caracter (\'({escape2}|{acepta2})\')
 "default"           { console.log("Reconocio : "+ yytext); return 'DEFAULT'}
 "case"              { console.log("Reconocio : "+ yytext); return 'CASE'}
 "break"             { console.log("Reconocio : "+ yytext); return 'BREAK'}
+"continue"          { console.log("Reconocio : "+ yytext); return 'CONTINUE'}
+"return"            { console.log("Reconocio : "+ yytext); return 'RETURN'}
 
 /* SIMBOLOS ER */
 {decimal}           { console.log("Reconocio : "+ yytext); return 'DECIMAL'}
@@ -113,10 +115,12 @@ caracter (\'({escape2}|{acepta2})\')
     const If = require('src/Clases/Instrucciones/SentenciaDeControl/If');
     const While = require('src/Clases/Instrucciones/SentenciaCiclica/While');
     const DoWhile = require('src/Clases/Instrucciones/SentenciaCiclica/DoWhile');
-    const For = require('src/Clases/Instrucciones/SentenciaCiclica/For');
     const metodo = require('src/Clases/Instrucciones/Metodo');
     const llamadita = require('src/Clases/Instrucciones/Llamada');
     const execito = require('src/Clases/Instrucciones/Exec');
+    const For = require('src/Clases/Instrucciones/SentenciaCiclica/For');
+    const detener = require('src/Clases/Instrucciones/SentenciaTransferencia/Detener');
+    const continuar = require('src/Clases/Instrucciones/SentenciaTransferencia/Continuar');
 
 %}
 
@@ -138,7 +142,7 @@ caracter (\'({escape2}|{acepta2})\')
 inicio: instrucciones EOF { $$ = new ast.default($1); return $$; }
     ;
 
-instrucciones : instrucciones instruccion {$$ = $1; $$.push($2); }
+instrucciones : instrucciones instruccion { $$ = $1; $$.push($2); }
             | instruccion { $$ = new Array(); $$.push($1); }
             ;
 
@@ -152,18 +156,30 @@ instruccion : print           { $$ = $1; }
             | metodo          { $$ = $1; }
             | llamaMetodo PYC { $$ = $1; }
             | Sexec PYC       { $$ = $1; }
-            /*| Swtich          { $$ = $1; }*/
             | Sfor            { $$ = $1; } 
-            /*| BREAK           {  }*/
+            | Sswitch         { $$ = $1; }
+            | BREAK PYC       { $$ = new detener.default(); }
+            | CONTINUE PYC    { $$ = new continuar.default(); }
+            | RETURN PYC      {  }
+            | RETURN expresion PYC {  }
             ;
-/*Switch: SWITCH  PARA expresion PARC LLAVEA listadoCases DEFAULT LLAVEC
-            | SWITCH PARA expresion PARC LLAVEA listadoCases LLAVEC
-            | SWITCH PARA expresion PARC LLAVEA DEFAULT LLAVEC
-            ;
+Sswitch: SWITCH PARA expresion PARC LLAVEA listaCases def LLAVEC
+        | SWITCH PARA expresion PARC LLAVEA listaCases LLAVEC
+        | SWITCH PARA expresion PARC LLAVEA expresion def LLAVEC
+        ;
+listaCases: listaCases CASE expresion DOSP instrucciones
+        | CASE expresion DOSP instrucciones 
+        ;
 
-listadoCases: case expresion DOSP instrucciones for( int i = 0; i<10; i++){ }*/
-Sfor: FOR PARA declaracion PYC expresion PYC actualizar PARC LLAVEA instrucciones LLAVEC { console.log($3.simbolo); $$ = new For.default($3,expresion,); }
-    | FOR PARA asignacion PYC expresion PYC actualizar PARC LLAVEA instrucciones LLAVEC  { console.log($3.simbolo); }
+def: DEFAULT DOSP instrucciones
+    ;
+
+Sfor: FOR PARA declaracion PYC expresion PYC actualizar PARC LLAVEA instrucciones LLAVEC
+     { $$ = new For.default($3,null,$5,$7,$10,@1.first_line,@1.last_column);}
+    | FOR PARA asignacion PYC expresion PYC actualizar PARC LLAVEA instrucciones LLAVEC  
+     { $$ = new For.default(null,$3,$5,$7,$10,@1.first_line,@1.last_column); }
+    | FOR PARA asignacion PYC expresion PYC asignacion PARC LLAVEA instrucciones LLAVEC
+     { $$ = new For.default(null,$3,$5,$7,$10,@1.first_line,@1.last_column); }
     ;
 
 Sexec: EXEC llamaMetodo { $$ = new execito.default($2,@1.first_line,@1.last_column); }
@@ -242,7 +258,7 @@ expresion: DECIMAL { $$ = new primitivo.default(Number(yytext), @1.first_line, @
         | expresion MENOS expresion { $$ = new aritmetica.default($1, '-', $3, @1.first_line, @1.last_column, false); }
         | expresion MULTI expresion { $$ = new aritmetica.default($1, '*', $3, @1.first_line, @1.last_column, false); }
         | expresion DIV expresion { $$ = new aritmetica.default($1, '/', $3, @1.first_line, @1.last_column, false); }
-        | MENOS expresion %prec UNARIO { $$ = new aritmetica.default($1, 'UNARIO', null, @1.first_line, @1.last_column, false); }
+        | MENOS expresion %prec UNARIO { $$ = new aritmetica.default($2, 'UNARIO', $2, @1.first_line, @1.last_column, true); }
         | expresion AND expresion { $$ = new logica.default($1, '&&', $3, @1.first_line, @1.last_column, false); }
         | expresion OR expresion { $$ = new logica.default($1, '||', $3, @1.first_line, @1.last_column, false); }
         | NOT expresion { $$ = new logica.default($2, '!', null, @1.first_line, @1.last_column, true); }

@@ -29,19 +29,15 @@ export default class Llamada implements Instruccion{
             let simbolo = tabla.getSimbolo(this.id) as Metodo;
             if(this.esMismoMetodo(simbolo, controlador, tablaLocal)){
                 let r = simbolo.ejecutar(controlador,tablaLocal);
-
                 if( r!= null){
                     return r;
                 }
-    
             }else{
                 controlador.append('No es el mismo metodo');
             }
         }else{
             console.log(this.id);
         }
-        
-        //throw new Error("Method not implemented.");
     }
 
     esMismoMetodo (simbolo: Metodo, controlador, tablaLocal: TablaSimbolos): boolean{
@@ -74,5 +70,4 @@ export default class Llamada implements Instruccion{
         raiz.agregarHijo(new Nodo(")",""));
         return raiz;
     }
-    
 }

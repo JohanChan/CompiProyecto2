@@ -37,9 +37,17 @@
 </nav>
 <div class="form-floating">
   <p style="margin-left: 17%; margin-top: 1%;" class="fa fa-file-code-o"> Entrada</p>
-  <textarea  class="form-control" style="margin-left:17%; height: 200px; width: 60%;" [(ngModel)] = "codigo"></textarea>
+  <textarea  class="form-control" style="margin-left:17%; height: 400px; width: 60%;" [(ngModel)] = "codigo"></textarea>
 </div>
 <div class="form-floating">
   <p style="margin-left: 17%; margin-top: 1%;" class="fa fa-terminal"> Consola</p>
-  <textarea class="form-control" style="margin-left: 17%;height: 200px; width: 60%;" [(ngModel)] = "consola"></textarea>
+  <textarea class="form-control" style="margin-left: 17%;height: 400px; width: 60%;" [(ngModel)] = "consola"></textarea>
+</div>
+<button class="tablink" (click)="openPage('TablaSim')">Tabla de Simbolos</button>
+  
+    
+<div id="TablaSim" class="tabcontent" style="background-color: #616161;">
+  <table  id= "tablasimbols" style="width:100%" bordered="true">
+  
+  </table>
 </div>

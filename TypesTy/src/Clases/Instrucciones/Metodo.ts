@@ -4,6 +4,7 @@ import { Instruccion } from "../Interfaz/Instruccion";
 import Simbolos from "../TablaSimbolos/Simbolos";
 import { TablaSimbolos } from "../TablaSimbolos/TablaSimbolos";
 import Tipo from "../TablaSimbolos/Tipo";
+import Continuar from "./SentenciaTransferencia/Continuar";
 
 export default class Metodo extends Simbolos implements Instruccion{
     public listadosInstrucciones: Array<Instruccion>;
@@ -33,12 +34,15 @@ export default class Metodo extends Simbolos implements Instruccion{
             if(a!=null){
                 return a;
             }
+            if(instruccion instanceof Continuar){
+                console.log("No se puede ");
+            }
         }
         return null;
     }
     
     recorrer(): Nodo {
-        let raiz = new Nodo("Metodo","");
+        let raiz = new Nodo("Funcion","");
         raiz.agregarHijo(new Nodo(this.tipo.stype,""));
         raiz.agregarHijo(new Nodo(this.identificador,""));
 

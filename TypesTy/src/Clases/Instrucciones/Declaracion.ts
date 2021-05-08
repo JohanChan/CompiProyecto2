@@ -33,7 +33,7 @@ export default class Declaracion implements Instruccion{
             let val = aux.valor.getValor(controlador, tabla);
 
             let v = aux.valor.getTipo(controlador, tabla);
-            //console.log(v, this.type.type)
+            console.log(v, this.type.type)
             if(v == this.type.type || (v == tipo.DECIMAL && this.type.type == tipo.ENTERO) || (v == 4 && this.type.type == 3)){
                 let nuevo = new Simbolos(aux.simbolo, this.type, aux.identificador, val);
                 console.log(nuevo);

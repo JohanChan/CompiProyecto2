@@ -17,7 +17,6 @@ export default class Tipo{
     }
 
     getTipo(stype: string): tipo{
-        
         if(stype == 'ENTERO'){
             return tipo.ENTERO;
         }else if(stype == 'DECIMAL'){

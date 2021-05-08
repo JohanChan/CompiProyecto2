@@ -3,6 +3,8 @@ import Controlador from "src/Clases/Controlador";
 import { Expresion } from "src/Clases/Interfaz/Expresion";
 import { Instruccion } from "src/Clases/Interfaz/Instruccion";
 import { TablaSimbolos } from "src/Clases/TablaSimbolos/TablaSimbolos";
+import Continuar from "../SentenciaTransferencia/Continuar";
+import Detener from "../SentenciaTransferencia/Detener";
 
 export default class While implements Instruccion{
 
@@ -22,13 +24,22 @@ export default class While implements Instruccion{
         let val = this.condicion.getValor(controlador,tabla);
         
         if(typeof val === 'boolean'){
+            sig:
             while(this.condicion.getValor(controlador,tabla)){
                 let tablaLocal = new TablaSimbolos(tabla);
 
                 for(let i of this.listadoInstrucciones){
                     let r = i.ejecutar(controlador,tablaLocal);
+                    if(i instanceof Detener || r instanceof Detener){
+                        return r;
+                    }
+                    if(i instanceof Continuar || r instanceof Continuar){
+                        continue sig;
+                    }
                 }
+               // continue sig;   
             }
+            
         }
         //throw new Error("Method not implemented.");
     }

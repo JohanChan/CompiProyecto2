@@ -33,7 +33,11 @@ export default class Primitivo implements Expresion{
     }
 
     recorrer():Nodo{
-        throw new Error("Metodo no implementado");
+        
+        let raiz = new Nodo("Primitivo","");
+        raiz.agregarHijo(new Nodo(this.primitivo.toString(),""));
+        return raiz;
+        //throw new Error("Metodo no implementado");
     }
 
 }

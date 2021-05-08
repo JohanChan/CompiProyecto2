@@ -64,4 +64,20 @@ export default class Controlador{
             return '...';
         }
     }
+
+    graficar(controlador: Controlador, tabla: TablaSimbolos){
+        var cadena = "<thead><tr><td colspan=\"6\">Tabla de Simbolos</td></tr><tr><th>Rol</th><th>Nombre</th><th>Tipo</th><th>Ambito</th><th>Valor</th><th>Parametros</th></tr></thead>";
+        while(tabla != null){
+            for(let simbolo of tabla.tabla.values()){
+                console.log();
+                cadena += "<tr mdbTableCol class=\"grey lighten-1 black-text\"><th scope=\"row\">" +  this.getRol(simbolo) + "</th><td>" + simbolo.identificador + 
+                "</td><td>" + this.getTipo(simbolo) +"</td>"  + 
+                "</td><td>" + this.getAmbito() + 
+                "</td><td>" + this.getValor(simbolo) + 
+                "</td><td>" + this.parametros(simbolo) +"</td>" +  "</tr>";
+            }
+            tabla = tabla.ant;
+        }
+        return cadena;
+    }
 }

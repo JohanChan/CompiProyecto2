@@ -35,6 +35,7 @@ export default class Aritmentica extends Operacion implements Expresion{
             valorDer = this.expresionDer.getValor(controlador,tabla);
         }else{
             valorUnario = this.expresionIzq.getValor(controlador,tabla);
+            console.log(this.expresionIzq.getTipo(controlador,tabla));
         }
 
         switch(this.operador){
@@ -49,7 +50,7 @@ export default class Aritmentica extends Operacion implements Expresion{
                         }
                         return valorIzq + numero;
                     }else if(typeof valorDer === 'string'){
-                        if(valorDer.length == 1){
+                        if(valorDer.length === 1){
                             let letra = valorDer.charCodeAt(0);
                             return valorIzq + letra;
                         }else{
@@ -78,12 +79,10 @@ export default class Aritmentica extends Operacion implements Expresion{
                 }else if(typeof valorIzq === 'string'){
                     //return valorIzq + valorDer;
                         if(valorIzq.length == 1){
-                            if(typeof valorDer === 'number'){
-                                return valorIzq + valorDer;
-                            }else if (typeof valorDer === 'boolean'){
+                            if (typeof valorDer === 'boolean'){
                                 controlador.append(`Error semantico: La variable ${valorIzq} tipo char no se puede sumar con variable ${valorDer} tipo boolean, fila: ${this.fila} columna: ${this.columna}`);
                                 controlador.errores.push(new Errores('Semantico',`La variable ${valorIzq} tipo char no se puede sumar con variable ${valorDer} tipo boolean`,this.fila, this.columna));    
-                            }else if(typeof valorDer === 'string'){
+                            }else {
                                 return valorIzq + valorDer;
                             }
                         }else{
@@ -92,8 +91,8 @@ export default class Aritmentica extends Operacion implements Expresion{
                 }
                 break;
                 case Operador.UNARIO:
-                    if(typeof valorIzq === 'number'){
-                        return -valorIzq;
+                    if(typeof valorUnario === 'number'){
+                        return -valorUnario;
                     }else{
                         controlador.append(`Error semantico: No se puede negar ${valorIzq}, fila: ${this.fila} columna: ${this.columna}`);
                         controlador.errores.push(new Errores('Semantico',`No se puede negar ${valorIzq}`,this.fila, this.columna));                        

@@ -4,6 +4,8 @@ import { Expresion } from "src/Clases/Interfaz/Expresion";
 import { Instruccion } from "src/Clases/Interfaz/Instruccion";
 import { TablaSimbolos } from "src/Clases/TablaSimbolos/TablaSimbolos";
 import { tipo } from "src/Clases/TablaSimbolos/Tipo";
+import Continuar from "../SentenciaTransferencia/Continuar";
+import Detener from "../SentenciaTransferencia/Detener";
 
 export default class If implements Instruccion{
     
@@ -30,10 +32,22 @@ export default class If implements Instruccion{
             if(valor){
                 for(let i of this.listadoIf){
                     let res = i.ejecutar(controlador,tablaLocal);
+                    if(i instanceof Detener || res instanceof Detener){
+                        return res;
+                    }
+                    if(i instanceof Continuar || res instanceof Continuar){
+                        return res;
+                    }
                 }
             }else{
                 for(let i of this.listadoElse){
                     let res = i.ejecutar(controlador,tablaLocal);
+                    if(i instanceof Detener || res instanceof Detener){
+                        return res;
+                    }
+                    if(i instanceof Continuar || res instanceof Continuar){
+                        return res;
+                    }
                 }
             }
         } 

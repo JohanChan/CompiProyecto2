@@ -55,7 +55,7 @@ export default class Operacion implements Expresion{
             case '||': return Operador.OR; break;
             case '&&': return Operador.AND; break;
             case '!': return Operador.NOT; break;
-            case 'UNARIO': return Operador.MAYORIGUAL; break;
+            case 'UNARIO': return Operador.UNARIO; break;
             case '%': return Operador.MOD; break;
             case '^': return Operador.POTENCIA; break;
             case '==': return Operador.COMPARAR; break;
