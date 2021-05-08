@@ -61,7 +61,7 @@ export default class For implements Instruccion{
                         let retorno = i.ejecutar(controlador,tablaLocal);
                         if(i instanceof Detener || retorno instanceof Detener){
                             return retorno;
-                        }else if(i instanceof Continuar){
+                        }else if(i instanceof Continuar || retorno instanceof Continuar){
                             this.actualizar.ejecutar(controlador,tablaLocal);
                         }
                     }

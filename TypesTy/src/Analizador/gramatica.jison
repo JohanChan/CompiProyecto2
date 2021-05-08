@@ -121,6 +121,9 @@ caracter (\'({escape2}|{acepta2})\')
     const For = require('src/Clases/Instrucciones/SentenciaCiclica/For');
     const detener = require('src/Clases/Instrucciones/SentenciaTransferencia/Detener');
     const continuar = require('src/Clases/Instrucciones/SentenciaTransferencia/Continuar');
+    const retornar = require('src/Clases/Instrucciones/SentenciaTransferencia/Retornar');
+    const casito = require('src/Clases/Instrucciones/SentenciaDeControl/Case');
+    const swish = require('src/Clases/Instrucciones/SentenciaDeControl/Switch');
 
 %}
 
@@ -160,18 +163,18 @@ instruccion : print           { $$ = $1; }
             | Sswitch         { $$ = $1; }
             | BREAK PYC       { $$ = new detener.default(); }
             | CONTINUE PYC    { $$ = new continuar.default(); }
-            | RETURN PYC      {  }
-            | RETURN expresion PYC {  }
+            | RETURN PYC      { $$ = new retornar.default(null); }
+            | RETURN expresion PYC { $$ = new retornar.default($2); }
             ;
-Sswitch: SWITCH PARA expresion PARC LLAVEA listaCases def LLAVEC
-        | SWITCH PARA expresion PARC LLAVEA listaCases LLAVEC
-        | SWITCH PARA expresion PARC LLAVEA expresion def LLAVEC
+Sswitch: SWITCH PARA expresion PARC LLAVEA listaCases defa LLAVEC    { console.log("Def ",$7); $$ = new swish.default($3,$6,$7); }
+        /*| SWITCH PARA expresion PARC LLAVEA listaCases LLAVEC       { $$ = new swish.default($3,$6,null); }*/
+        /*| SWITCH PARA expresion PARC LLAVEA def LLAVEC    { $$ = new swish.default($3,null,$7); }*/
         ;
-listaCases: listaCases CASE expresion DOSP instrucciones
-        | CASE expresion DOSP instrucciones 
+listaCases: listaCases CASE expresion DOSP instrucciones { $$ = $1; $$.push( new casito.default($3,$5)); }
+        | CASE expresion DOSP instrucciones              { $$ = new Array(); $$.push( new casito.default($2,$4)); } 
         ;
 
-def: DEFAULT DOSP instrucciones
+defa: DEFAULT DOSP instrucciones { $$ = $3; }
     ;
 
 Sfor: FOR PARA declaracion PYC expresion PYC actualizar PARC LLAVEA instrucciones LLAVEC
