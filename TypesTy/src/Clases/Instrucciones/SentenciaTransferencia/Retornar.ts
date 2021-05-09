@@ -13,12 +13,11 @@ export default class Retonar implements Instruccion{
     }
     ejecutar(controlador: Controlador, tabla: TablaSimbolos) {
         if(this.retorno != null){
+
             return this.retorno.getValor(controlador, tabla);
         }else{
             return this;
         }
-
-        //throw new Error("Method not implemented.");
     }
     recorrer(): Nodo {
         let raiz = new Nodo('Return','');
@@ -26,7 +25,6 @@ export default class Retonar implements Instruccion{
             raiz.agregarHijo(this.retorno.recorrer());
         }
         return raiz;
-        //throw new Error("Method not implemented.");
     }
     
 }

@@ -21,7 +21,7 @@ export default class Asignacion implements Instruccion{
     ejecutar(controlador: Controlador, tabla: TablaSimbolos) {
         if(tabla.existe(this.id)){
             let aux = this.valor.getValor(controlador,tabla);
-            console.log(aux);
+            //console.log(aux);
             let atipo = this.valor.getTipo(controlador, tabla);
             let auxTipo = tabla.getSimbolo(this.id)?.tipo;
             //console.log(auxTipo.type, atipo);

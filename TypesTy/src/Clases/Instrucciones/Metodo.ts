@@ -1,10 +1,13 @@
+import { Expression } from "@angular/compiler";
 import Nodo from "../Ast/Nodo";
 import Controlador from "../Controlador";
+import { Expresion } from "../Interfaz/Expresion";
 import { Instruccion } from "../Interfaz/Instruccion";
 import Simbolos from "../TablaSimbolos/Simbolos";
 import { TablaSimbolos } from "../TablaSimbolos/TablaSimbolos";
 import Tipo from "../TablaSimbolos/Tipo";
 import Continuar from "./SentenciaTransferencia/Continuar";
+import Retonar from "./SentenciaTransferencia/Retornar";
 
 export default class Metodo extends Simbolos implements Instruccion{
     public listadosInstrucciones: Array<Instruccion>;
@@ -31,11 +34,14 @@ export default class Metodo extends Simbolos implements Instruccion{
         
         for(let instruccion of this.listadosInstrucciones){
             let a = instruccion.ejecutar(controlador, tablaLocal);
-            if(a!=null){
-                return a;
-            }
-            if(instruccion instanceof Continuar){
+
+            if(instruccion instanceof Continuar || a instanceof Retonar){
                 console.log("No se puede ");
+            }
+            if(instruccion instanceof Retonar || a instanceof Retonar){
+                if(a!=null){
+                    return a;
+                }
             }
         }
         return null;

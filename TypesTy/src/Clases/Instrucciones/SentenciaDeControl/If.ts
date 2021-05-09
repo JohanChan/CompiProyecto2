@@ -6,6 +6,7 @@ import { TablaSimbolos } from "src/Clases/TablaSimbolos/TablaSimbolos";
 import { tipo } from "src/Clases/TablaSimbolos/Tipo";
 import Continuar from "../SentenciaTransferencia/Continuar";
 import Detener from "../SentenciaTransferencia/Detener";
+import Retonar from "../SentenciaTransferencia/Retornar";
 
 export default class If implements Instruccion{
     
@@ -38,6 +39,9 @@ export default class If implements Instruccion{
                     if(i instanceof Continuar || res instanceof Continuar){
                         return res;
                     }
+                    if(i instanceof Retonar || res instanceof Retonar){
+                        return res;
+                    }
                 }
             }else{
                 for(let i of this.listadoElse){
@@ -46,6 +50,9 @@ export default class If implements Instruccion{
                         return res;
                     }
                     if(i instanceof Continuar || res instanceof Continuar){
+                        return res;
+                    }
+                    if(i instanceof Retonar || res instanceof Retonar){
                         return res;
                     }
                 }

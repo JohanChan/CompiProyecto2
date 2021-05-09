@@ -165,6 +165,10 @@ instruccion : print           { $$ = $1; }
             | CONTINUE PYC    { $$ = new continuar.default(); }
             | RETURN PYC      { $$ = new retornar.default(null); }
             | RETURN expresion PYC { $$ = new retornar.default($2); }
+            | error         { console.log("Error Sintactico" + yytext 
+                                    + "linea: " + this._$.first_line 
+                                    + "columna: " + this._$.first_column); 
+                            }
             ;
 Sswitch: SWITCH PARA expresion PARC LLAVEA listaCases defa LLAVEC   { $$ = new swish.default($3,$6,$7); }
         | SWITCH PARA expresion PARC LLAVEA listaCases LLAVEC       { $$ = new swish.default($3,$6,null); }
@@ -198,6 +202,8 @@ parametrosLlamda: parametrosLlamda COMA expresion    { $$ = $1; $$.push($3); }
 
 metodo: VOID ID PARA PARC LLAVEA instrucciones LLAVEC           { $$ = new metodo.default(3, new tipo.default('VOID'), $2, [], true, $6, @1.first_line,@1.last_column); }
     | VOID ID PARA parametros PARC LLAVEA instrucciones LLAVEC  { $$ = new metodo.default(3, new tipo.default('VOID'), $2, $4, true, $7, @1.first_line,@1.last_column); }
+    | tipo ID PARA PARC LLAVEA instrucciones LLAVEC             { $$ = new metodo.default(3, $1, $2, [], true, $6, @1.first_line,@1.last_column); }
+    | tipo ID PARA parametros PARC LLAVEA instrucciones LLAVEC  { $$ = new metodo.default(3, $1, $2, $4, true, $6, @1.first_line,@1.last_column); }
     ;
 
 parametros: parametros COMA tipo ID       { $$ = $1; $$.push(new simbolo.default(6,$3,$4,null)); }
@@ -277,4 +283,5 @@ expresion: DECIMAL { $$ = new primitivo.default(Number(yytext), @1.first_line, @
         | expresion INTERRC expresion DOSP expresion { $$ = new ternario.default($1,$3,$5,@1.first_line,@1.last_column); }
         | ID INCRE { $$ = new aritmetica.default(new identificador.default($1,@1.first_line,@1.last_column),'+', new primitivo.default(1,@1.first_line,@1.last_column), @1.first_line, @1.last_column, false); }
         | ID DECRE { $$ = new aritmetica.default(new identificador.default($1,@1.first_line,@1.last_column),'-', new primitivo.default(1,@1.first_line,@1.last_column), @1.first_line, @1.last_column, false); }
+        | llamaMetodo { $$ = $1; }
         ;

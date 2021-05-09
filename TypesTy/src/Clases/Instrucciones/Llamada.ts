@@ -2,14 +2,17 @@ import { Expression } from "@angular/compiler";
 import { Container } from "@angular/compiler/src/i18n/i18n_ast";
 import Nodo from "../Ast/Nodo";
 import Controlador from "../Controlador";
+import Aritmentica from "../Expresiones/Aritmetica";
+import Identificador from "../Expresiones/Identificador";
 import { Expresion } from "../Interfaz/Expresion";
 import { Instruccion } from "../Interfaz/Instruccion";
 import { TablaSimbolos } from "../TablaSimbolos/TablaSimbolos";
 import { tipo } from "../TablaSimbolos/Tipo";
 import Declaracion from "./Declaracion";
 import Metodo from "./Metodo";
+import Retornar from "./SentenciaTransferencia/Retornar";
 
-export default class Llamada implements Instruccion{
+export default class Llamada implements Instruccion, Expresion{
 
     public id: string;
     public fila: number;
@@ -22,16 +25,57 @@ export default class Llamada implements Instruccion{
         this.columna = columna;
         this.parametros = parametros;
     }
+    getTipo(controlador: Controlador, tabla: TablaSimbolos): tipo {
+        let tipito = tabla.getSimbolo(this.id) as Metodo
+        //console.log(tipito.tipo.type, tipito.tipo.stype);
+        return tipito.tipo.type;
+    }
+
+    getValor(controlador: Controlador, tabla: TablaSimbolos) {
+        let p = tabla.getSimbolo(this.id) as Metodo;
+        console.log(p.listadosInstrucciones);
+        let tablaLocal = new TablaSimbolos(tabla);
+        if(this.esMismoMetodo(p,controlador,tablaLocal)){
+            for(let i of p.listadosInstrucciones){
+                if( i instanceof Retornar){
+                    i.ejecutar(controlador,tabla); 
+                    //console.log(i.retorno.getValor);
+                    return i.retorno;     
+                }
+            }  
+        }
+      
+
+        /*if(tabla.existe(this.id)){
+            //let tablaLocal = new TablaSimbolos(tabla);
+            let simbolo = tabla.getSimbolo(this.id) as Metodo;
+            console.log(simbolo.listadosInstrucciones);
+            if(this.esMismoMetodo(simbolo, controlador, tabla)){
+                for(let i of simbolo.listadosInstrucciones){
+                    if( i instanceof Retornar){
+                        let r = i.ejecutar(controlador,tabla); 
+                        if( r!= null){
+                            return r;
+                        } 
+                    }
+                }
+              
+            }   
+        }else{
+            console.log(this.id);
+        }*/
+    }
 
     ejecutar(controlador: Controlador, tabla: TablaSimbolos) {
         if(tabla.existe(this.id)){
             let tablaLocal = new TablaSimbolos(tabla);
             let simbolo = tabla.getSimbolo(this.id) as Metodo;
+            //console.log(simbolo.listadosInstrucciones);
             if(this.esMismoMetodo(simbolo, controlador, tablaLocal)){
-                let r = simbolo.ejecutar(controlador,tablaLocal);
-                if( r!= null){
-                    return r;
-                }
+                let r = simbolo.ejecutar(controlador,tablaLocal);              
+                    if( r!= null){
+                        return r;
+                    }                
             }else{
                 controlador.append('No es el mismo metodo');
             }

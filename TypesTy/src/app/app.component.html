@@ -43,15 +43,20 @@
   <p style="margin-left: 17%; margin-top: 1%;" class="fa fa-terminal"> Consola</p>
   <textarea class="form-control" style="margin-left: 17%;height: 400px; width: 60%;" [(ngModel)] = "consola"></textarea>
 </div>
-<button class="tablink" (click)="openPage('TablaSim')">Tabla de Simbolos</button>
   
-    
+<div class="mt-5">
+  <h3>Tabla de Simbolos</h3>    
+</div>
+
 <div id="TablaSim" class="tabcontent" style="background-color: #616161;">
+
   <table  id= "tablasimbols" style="width:100%" bordered="true">
   
   </table>
 </div>
 
-<div id="Ast">
+
+<div class="mt-5" id="Ast">
+  <h3>Árbol Sintactico</h3>
   <div id="graph" style="text-align: center"></div>
 </div>
